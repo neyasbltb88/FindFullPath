@@ -19,10 +19,7 @@ export default class FindFullPath {
     }
 
     _findParent(el, path = []) {
-        path.push({
-            selectors: this._detectSelector(el),
-            // nth: ''
-        });
+        path.push(this._detectSelector(el));
         if (el.parentElement) {
             this._findParent(el.parentElement, path);
         }
@@ -30,8 +27,18 @@ export default class FindFullPath {
         return path;
     }
 
-    _countSibling(el, nth = 1) {
+    _findNth(el) {
+        let nth = 0;
+        let parent = el.parentElement;
+        if (parent) {
+            nth = [...parent.children].indexOf(el);
+        }
 
+        return nth;
+    }
+
+    _buildNth(nth) {
+        return `:nth-child(${++nth})`;
     }
 
     _buildPath(path) {
@@ -40,7 +47,10 @@ export default class FindFullPath {
 
     _buildSelectors(path) {
         path.map((el, index) => {
-            path[index] = el.selectors.node + this._buildId(el.selectors.id) + this._buildClass(el.selectors.class) + this._buildDataset(el.selectors.data);
+            let selector = el.node + this._buildId(el.id);
+            selector += this._buildClass(el.class) + this._buildDataset(el.data);
+            selector += this._buildNth(el.nth);
+            path[index] = selector;
         });
 
         return path;
@@ -68,12 +78,15 @@ export default class FindFullPath {
 
     _detectSelector(el) {
         let selectors = {};
+
+        selectors.node = el.nodeName;
         selectors.id = el.id ? el.id : '';
         selectors.class = el.classList.length ? [...el.classList] : '';
         selectors.data = Object.keys(el.dataset).length ? {
             ...el.dataset
         } : '';
-        selectors.node = el.nodeName;
+        selectors.nth = this._findNth(el);
+
 
         return selectors;
     }
