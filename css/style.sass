@@ -46,3 +46,22 @@ body
                 height: 200px
                 margin: 5px
                 background-color: var(--item-bgc)
+
+.path_info_wrap
+    position: fixed
+    top: 0
+    right: 0
+    z-index: 10
+    padding: 20px
+    background-color: rgba(0,0,0,.4)
+    border-radius: 7px 0 0 7px
+    color: #fff
+    font-family: sans-serif
+    font-size: 14px
+    max-width: 100%
+    overflow: auto
+    .path_info
+        &:before
+            content: 'Селектор: '
+        .highlight_target
+            color: #ffc000
